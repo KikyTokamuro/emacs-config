@@ -1,0 +1,532 @@
+#+TITLE: Literate Emacs Configuration
+#+AUTHOR: Arhangelsky Daniil (Kiky Tokamuro)
+
+* Run as daemon
+Create service /emacs.service/ and add hotkey for /my-emacsclient.sh/.
+Example:
+- /sh -c "my-emacsclient.sh"/
+  
+* Base settings
+
+** Speed-up at startup
+#+BEGIN_SRC emacs-lisp
+  (let* ((normal-gc-cons-threshold (* 20 1024 1024))
+	 (init-gc-cons-threshold (* 128 1024 1024)))
+    (setq gc-cons-threshold init-gc-cons-threshold)
+    (add-hook 'emacs-startup-hook
+	      (lambda () (setq gc-cons-threshold normal-gc-cons-threshold))))
+#+END_SRC
+
+** Increase the amount of data which emacs reads from the process
+#+begin_src emacs-lisp
+  (setq read-process-output-max (* 1024 1024))
+#+end_src
+
+** Init emacs packages
+#+begin_src emacs-lisp
+  (package-initialize)
+#+end_src
+
+** Setup package archives
+#+begin_src emacs-lisp
+  (require 'package)
+  (add-to-list 'package-archives
+	       '("melpa" . "https://melpa.org/packages/") t)
+#+end_src
+
+** Install and require use-package
+#+begin_src emacs-lisp
+  (unless (package-installed-p 'use-package)
+    (package-refresh-contents)
+    (package-install 'use-package))
+
+  (require 'use-package)
+#+end_src
+
+** Setup window title
+#+begin_src emacs-lisp
+  (setq frame-title-format
+	'("%b@" (:eval (or (file-remote-p default-directory 'host) system-name)) " — Emacs"))
+#+end_src
+
+** Inhibit startup/splash screen
+#+begin_src emacs-lisp
+  (setq inhibit-splash-screen t)
+  (setq ingibit-startup-message t)
+#+end_src
+
+** Show paren mode
+Show-paren-mode allows one to see matching pairs of parentheses and other characters. When point is on the opening character of one of the paired characters, the other is highlighted. When the point is after the closing character of one of the paired characters, the other is highlighted. 
+#+begin_src emacs-lisp
+  (show-paren-mode 1)
+  (setq show-paren-style 'expression)
+#+end_src
+
+** Electric pair and indent modes
+Electric Pair mode, provides a way to easily insert matching delimiters: parentheses, braces, brackets, etc. Whenever you insert an opening delimiter, the matching closing delimiter is automatically inserted as well, leaving point between the two. Conversely, when you insert a closing delimiter over an existing one, no insertion takes places, and that position is simply skipped over.
+Electric Indent mode is a global minor mode that automatically indents the line after every RET you type.
+#+begin_src emacs-lisp
+  (electric-pair-mode 1)
+  (electric-indent-mode 1)
+#+end_src
+
+** Delete selection mode
+Delete Selection mode lets you treat an Emacs region much like a typical text selection outside of Emacs: You can replace the active region just by typing text, and you can delete the selected text just by hitting the Backspace key.
+#+begin_src emacs-lisp
+  (delete-selection-mode t)
+#+end_src
+
+** Disable GUI components
+#+begin_src emacs-lisp
+  (tooltip-mode -1)
+  (menu-bar-mode -1)
+  (tool-bar-mode -1)
+  (scroll-bar-mode -1)
+  (blink-cursor-mode nil)
+#+end_src
+
+** Disable beeping
+#+begin_src emacs-lisp
+  (setq ring-bell-function 'ignore)
+#+end_src
+
+** Disable load average
+#+begin_src emacs-lisp
+  (setq display-time-default-load-average nil)
+#+end_src
+
+** Enable line wrapping
+#+begin_src emacs-lisp
+  (setq word-wrap t)
+  (global-visual-line-mode t)
+#+end_src
+
+** Setup RET keybind for newline and indent
+#+begin_src emacs-lisp
+  (global-set-key (kbd "RET") 'newline-and-indent)
+#+end_src
+
+** CUA
+cua-mode sets up key bindings that are compatible with the Common User Access (CUA) system used in many other applications.
+#+begin_src emacs-lisp
+  (cua-mode t)
+#+end_src
+
+** Clipboard
+#+begin_src emacs-lisp
+  (setq select-enable-clipboard t)
+#+end_src
+
+** Disable backup files
+For most files, the variable make-backup-files determines whether to make backup files. On most operating systems, its default value is t, so that Emacs does write backup files.
+#+begin_src emacs-lisp
+  (setq make-backup-files nil)
+#+end_src
+
+** Mouse scrolling
+#+begin_src emacs-lisp
+  (setq mouse-wheel-scroll-amount '(3 ((shift) . 3)))
+  (setq mouse-wheel-progressive-speed nil)
+  (setq mouse-wheel-follow-mouse 't)
+#+end_src
+
+* UI settings
+
+** Highlighting current line
+#+begin_src emacs-lisp
+  (use-package hl-line
+    :ensure t
+    :hook ((prog-mode org-mode) . hl-line-mode))
+#+end_src
+
+** Colors themes
+Highly accessible themes, conforming with the highest standard for colour contrast between background and foreground values (WCAG AAA). They also are optimised for users with red-green colour deficiency.
+#+begin_src emacs-lisp
+  (use-package modus-themes
+    :ensure t
+    :config
+    (load-theme 'modus-operandi t))
+#+end_src
+
+** Smooth scrolling
+This package offers a minor mode which make emacs scroll smoothly. It keeps the point away from the top and bottom of the current buffer's window in order to keep lines of context around the point visible as much as possible, whilst minimising the frequency of sudden scroll jumps which are visually confusing.
+#+begin_src emacs-lisp
+  (use-package smooth-scrolling
+    :ensure t
+    :init
+    (smooth-scrolling-mode 1))
+#+end_src
+
+** Rainbow delimiters
+Highlights delimiters such as parentheses, brackets or braces according to their depth. Each successive level is highlighted in a different color. This makes it easy to spot matching delimiters, orient yourself in the code, and tell which statements are at a given depth.
+#+begin_src emacs-lisp
+  (use-package rainbow-delimiters
+    :ensure t
+    :hook
+    (prog-mode . rainbow-delimiters-mode))
+#+end_src
+
+** Line numbers
+#+begin_src emacs-lisp
+  (use-package display-line-numbers
+    :ensure t
+    :config
+    (setq-default display-line-numbers-type 'absolute)
+    :hook
+    ((prog-mode conf-mode) . display-line-numbers-mode))
+#+end_src
+
+** Diminish
+This package implements hiding or abbreviation of the mode line displays (lighters) of minor-modes.
+#+begin_src emacs-lisp
+  (use-package diminish
+    :ensure t)
+#+end_src
+
+** Which key mode
+Minor mode for Emacs that displays the key bindings following your currently entered incomplete command (a prefix) in a popup.
+#+begin_src emacs-lisp
+  (use-package which-key
+    :ensure t
+    :init
+    (which-key-mode)
+    :diminish which-key-mode)
+#+end_src
+
+** Treemacs
+Treemacs is a file and project explorer similar to NeoTree or vim’s NerdTree, but largely inspired by the Project Explorer in Eclipse. It shows the file system outlines of your projects in a simple tree layout allowing quick navigation and exploration, while also possessing basic file management utilities.
+#+begin_src emacs-lisp
+  (use-package treemacs
+    :ensure t
+    :init
+    (define-key treemacs-mode-map [mouse-1] #'treemacs-single-click-expand-action)
+    :bind
+    ("<f5>" . treemacs))
+#+end_src
+
+** Helm
+Helm is an Emacs framework for incremental completions and narrowing selections. It provides an easy-to-use API for developers wishing to build their own Helm applications in Emacs, powerful search tools and dozens of already built-in commands providing completion to almost everything.
+#+begin_src emacs-lisp
+  (use-package helm
+    :ensure t
+    :init
+    (setq-default helm-M-x-fuzzy-match t)
+    :bind
+    (("M-x" . helm-M-x)
+     ("C-x C-f" . 'helm-find-files)
+     ("C-x C-b" . 'helm-buffers-list)))
+#+end_src
+
+** Projectile
+Projectile is a project interaction library for Emacs. Its goal is to provide a nice set of features operating on a project level without introducing external dependencies (when feasible).
+This library provides easy project management and navigation. The concept of a project is pretty basic - just a folder containing some special file (e.g. a VCS marker or a project descriptor file like pom.xml or Gemfile). Projectile will auto-detect pretty much every popular project type out of the box and you can easily extend it with additional project types.
+#+begin_src emacs-lisp
+  (use-package projectile
+    :diminish projectile-mode
+    :config
+    (projectile-mode 1)
+    :custom
+    ((projectile-completion-system 'helm))
+    :ensure t
+    :bind-keymap
+    ("C-c p" . projectile-command-map)
+    :init
+    (when (file-directory-p "~/work/")
+      (setq projectile-project-search-path '("~/work"))))
+#+end_src
+
+** Projectile Helm
+Helm UI for Projectile.
+#+begin_src emacs-lisp
+  (use-package helm-projectile
+    :ensure t
+    :init
+    (helm-projectile-on)
+    :config
+    (setq projectile-switch-project-action 'helm-projectile))
+#+end_src
+
+* Keyboard settings
+
+** Reverse-im
+Overrides function-key-map for preferred input-method(s) to translate input sequences to English, so we can use Emacs bindings while a non-default system layout is active.
+#+begin_src emacs-lisp
+  (use-package reverse-im
+    :ensure t
+    :config
+    (reverse-im-activate "russian-computer"))
+#+end_src
+
+* Path settings
+
+** Exec path from shell
+Make Emacs use the $PATH set up by the user's shell.
+#+begin_src emacs-lisp
+  (use-package exec-path-from-shell
+    :ensure t
+    :config
+    (setq exec-path-from-shell-variables '("PATH" "GOPATH" "PERL5LIB"))
+    :init
+    (when (daemonp)
+      (exec-path-from-shell-initialize)))
+#+end_src
+
+* Spell settings
+
+** Flyspell
+Flyspell is a minor mode that enables on-the-fly spell checking in Emacs. It is hardly intrusive. Flyspell highlights incorrect words as soon as they are completed or as soon as the TextCursor hits a new word.
+#+begin_src emacs-lisp
+  (use-package flyspell
+    :ensure t
+    :config
+    (setq ispell-program-name "aspell"))
+#+end_src
+
+* Programming
+
+** Magit
+Magit is a complete text-based user interface to Git. It fills the glaring gap between the Git command-line interface and various GUIs, letting you perform trivial as well as elaborate version control tasks with just a couple of mnemonic key presses.
+#+begin_src emacs-lisp
+  (use-package magit
+    :ensure t)
+#+end_src
+
+** Company mode
+Modular in-buffer completion framework.
+#+begin_src emacs-lisp
+  (use-package company
+    :ensure t
+    :init
+    (global-company-mode))
+#+end_src
+
+** Eglot
+A client for Language Server Protocol servers.
+#+begin_src emacs-lisp
+  (use-package eglot
+    :ensure t)
+#+end_src
+
+** Flycheck
+On the fly syntax checking.
+#+begin_src emacs-lisp
+  (use-package flycheck
+    :ensure t
+    :diminish flycheck-mode
+    :config
+    (global-flycheck-mode))
+#+end_src
+
+** Org mode
+Major mode for keeping notes, authoring documents, computational notebooks, literate programming, maintaining to-do lists, planning projects, and more — in a fast and effective plain text system.
+#+begin_src emacs-lisp
+  (use-package org
+    :config
+    (setq org-confirm-babel-evaluate nil)
+    (setq org-html-validation-link nil)
+    (org-babel-do-load-languages
+     'org-babel-load-languages
+     '((org        . t)
+       (python     . t)
+       (perl       . t)
+       (C          . t)
+       (awk        . t)
+       (lisp       . t)
+       (scheme     . t)
+       (shell      . t)
+       (emacs-lisp . t)
+       (js         . t))))
+#+end_src
+
+** Web development
+web-beautify is a formatting package of HTML, CSS and JavaScript/JSON.
+For install:
+- /npm -g install js-beautify/ 
+#+begin_src emacs-lisp
+  (use-package web-beautify
+    :ensure t)
+#+end_src
+
+** Lisp
+SLY is Sylvester the Cat's Common Lisp IDE.
+#+begin_src emacs-lisp
+  (use-package sly
+    :ensure t
+    :config
+    (setq inferior-lisp-program "sbcl"))
+#+end_src
+
+Geiser is a generic Emacs/Scheme interaction mode, featuring an enhanced REPL and a set of minor modes improving Emacs’ basic scheme major mode.
+#+begin_src emacs-lisp
+  (use-package geiser-guile
+    :mode
+    ("\\.scm\\'" . scheme-mode)
+    :config
+    (setq geiser-active-implementations '(guile)
+	  geiser-guile-binary "guile3.0"))
+#+end_src
+
+Major and minor modes for Racket: edit, REPL, check-syntax, debug, profile, and more. 
+#+begin_src emacs-lisp
+  (use-package racket-mode
+    :ensure t
+    :hook
+    (racket-mode . racket-xp-mode))
+#+end_src
+
+** C/C++
+#+begin_src emacs-lisp
+  (defun my-c/c++-mode-hook ()
+    "C/C++ mode hook."
+    (setq c-basic-offset 4)
+    (c-set-offset 'substatement-open 0)
+    (eglot-ensure))
+
+  (add-hook 'c-mode-hook 'my-c/c++-mode-hook)
+  (add-hook 'c++-mode-hook 'my-c/c++-mode-hook)
+#+end_src
+
+** Python
+For install python lsp:
+- /pip install python-language-server[all]/
+#+begin_src emacs-lisp
+  (use-package python-mode
+    :hook
+    (python-mode . eglot-ensure))
+#+end_src
+
+** Golang
+For install golang lsp:
+- /go install golang.org/x/tools/gopls@latest/
+#+begin_src emacs-lisp
+  (defun my-go-hooks ()
+    "Golang hooks."
+    (add-hook 'before-save-hook #'eglot-format-buffer -10 t)
+    (eglot-ensure))
+
+  (use-package go-mode
+    :ensure t
+    :mode ("\\.go\\'" . go-mode)
+    :hook
+    (go-mode . my-go-hooks))
+#+end_src
+
+** OCaml
+Tuareg Mode is a good Emacs mode to edit OCaml code. It has a parser that let you recognize syntax errors by the meaning of special indentation, it can start an Ocaml toplevel and let you interact with it in a dedicated Emacs buffer.
+#+begin_src emacs-lisp
+  (use-package tuareg-mode
+    :mode
+    ("\\.ml[ily]?$" . tuareg-mode)
+    :init
+    (let ((opam-share (ignore-errors (car (process-lines "opam" "config" "var" "share")))))
+      (when (and opam-share (file-directory-p opam-share))
+	(add-to-list 'load-path (expand-file-name "emacs/site-lisp" opam-share))
+	(setq merlin-completion-with-doc t)
+	(setq merlin-command "opam exec ocamlmerlin")))
+    :hook
+    (tuareg-mode . merlin-mode))
+#+end_src
+
+utop is an improved toplevel (i.e., Read-Eval-Print Loop) for OCaml.
+#+begin_src emacs-lisp
+  (use-package utop
+    :diminish utop-minor-mode
+    :config
+    (setq utop-command "opam exec -- utop -emacs")
+    :hook
+    (tuareg-mode . utop-minor-mode))
+#+end_src
+
+Merlin and company mode integration.
+#+begin_src emacs-lisp
+  (use-package merlin-company)
+#+end_src
+
+** Perl
+For install perl lsp:
+- /sudo yum install perl-App-cpanminus perl-AnyEvent-AIO perl-Coro/
+- /sudo cpanm Class::Refresh/
+- /sudo cpanm Compiler::Lexer/
+- /sudo cpanm Hash::SafeKeys/
+- /sudo cpanm Perl::LanguageServer/
+#+begin_src emacs-lisp
+  (use-package cperl-mode
+    :ensure t
+    :init (defalias 'perl-mode 'cperl-mode)
+    :config
+    (setq cperl-highlight-variables-indiscriminately t
+	  cperl-indent-level 4
+	  cperl-tab-always-indent nil
+	  cperl-continued-statement-offset 0
+	  cperl-indent-parens-as-block t
+	  cperl-close-paren-offset -4
+	  cperl-electric-keywords t
+	  cperl-label-offset 0)
+    :hook
+    (cperl-mode . eglot-ensure))
+#+end_src
+
+Perltidy integration.
+#+begin_src emacs-lisp
+  (defun perltidy-region ()
+    "Run perltidy on the current region."
+    (interactive)
+    (if (executable-find "perltidy")
+	(save-excursion
+	  (shell-command-on-region (point) (mark) "perltidy -q" nil t))
+      (message "Unable to find perltidy")))
+
+  (defun perltidy-defun ()
+    "Run perltidy on the current defun."
+    (interactive)
+    (save-excursion (mark-defun)
+		    (perltidy-region)))
+
+  (defun perltidy-buffer ()
+    "Run perltidy on current buffer."
+    (interactive)
+    (if (executable-find "perltidy")
+	(let ((where-i-was (point)))
+	  (shell-command-on-region (point-min) (point-max) "perltidy -q" nil t)
+	  (goto-char where-i-was))
+      (message "Unable to find perltidy")))
+#+end_src
+
+* Web tools
+
+** Request
+HTTP library.
+#+begin_src emacs-lisp
+  (use-package request
+    :ensure t)
+#+end_src
+
+** EWW lnum
+This is extension to the Emacs browser eww that adds conkeror like functionality[1].
+#+begin_src emacs-lisp
+  (use-package eww-lnum
+    :ensure t)
+#+end_src
+
+** EWW
+EWW, the Emacs Web Wowser, is a web browser package for Emacs. It allows browsing URLs within an Emacs buffer.
+#+begin_src emacs-lisp
+  (use-package eww
+    :bind
+    (:map eww-mode-map
+	  ("f" . eww-lnum-follow)))
+#+end_src
+
+** Google translate
+This package allows to translate the strings using Google Translate service directly from GNU Emacs.
+#+begin_src emacs-lisp
+  (use-package google-translate
+    :ensure t
+    :functions (google-translate--search-tkk)
+    :custom
+    (google-translate-backend-method 'curl)
+    :config
+    (defun google-translate--search-tkk ()
+      "Search TKK."
+      (list 430675 2721866130)))
+#+end_src
