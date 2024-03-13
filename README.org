@@ -241,7 +241,6 @@ Helm is an Emacs framework for incremental completions and narrowing selections.
      ("C-x C-b" . 'helm-buffers-list)))
 #+end_src
 
-** Projectile Helm
 Helm UI for Projectile.
 #+begin_src emacs-lisp
   (use-package helm-projectile
