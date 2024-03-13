@@ -193,30 +193,6 @@ Minor mode for Emacs that displays the key bindings following your currently ent
     :diminish which-key-mode)
 #+end_src
 
-** Treemacs
-Treemacs is a file and project explorer similar to NeoTree or vim’s NerdTree, but largely inspired by the Project Explorer in Eclipse. It shows the file system outlines of your projects in a simple tree layout allowing quick navigation and exploration, while also possessing basic file management utilities.
-#+begin_src emacs-lisp
-  (use-package treemacs
-    :ensure t
-    :init
-    (define-key treemacs-mode-map [mouse-1] #'treemacs-single-click-expand-action)
-    :bind
-    ("<f5>" . treemacs))
-#+end_src
-
-** Helm
-Helm is an Emacs framework for incremental completions and narrowing selections. It provides an easy-to-use API for developers wishing to build their own Helm applications in Emacs, powerful search tools and dozens of already built-in commands providing completion to almost everything.
-#+begin_src emacs-lisp
-  (use-package helm
-    :ensure t
-    :init
-    (setq-default helm-M-x-fuzzy-match t)
-    :bind
-    (("M-x" . helm-M-x)
-     ("C-x C-f" . 'helm-find-files)
-     ("C-x C-b" . 'helm-buffers-list)))
-#+end_src
-
 ** Projectile
 Projectile is a project interaction library for Emacs. Its goal is to provide a nice set of features operating on a project level without introducing external dependencies (when feasible).
 This library provides easy project management and navigation. The concept of a project is pretty basic - just a folder containing some special file (e.g. a VCS marker or a project descriptor file like pom.xml or Gemfile). Projectile will auto-detect pretty much every popular project type out of the box and you can easily extend it with additional project types.
@@ -233,6 +209,36 @@ This library provides easy project management and navigation. The concept of a p
     :init
     (when (file-directory-p "~/work/")
       (setq projectile-project-search-path '("~/work"))))
+#+end_src
+
+** Treemacs
+Treemacs is a file and project explorer similar to NeoTree or vim’s NerdTree, but largely inspired by the Project Explorer in Eclipse. It shows the file system outlines of your projects in a simple tree layout allowing quick navigation and exploration, while also possessing basic file management utilities.
+#+begin_src emacs-lisp
+  (use-package treemacs
+    :ensure t
+    :init
+    (define-key treemacs-mode-map [mouse-1] #'treemacs-single-click-expand-action)
+    :bind
+    ("<f5>" . treemacs))
+#+end_src
+
+Projectile integration for treemacs.
+#+begin_src emacs-lisp
+  (use-package treemacs-projectile
+    :ensure t)
+#+end_src
+
+** Helm
+Helm is an Emacs framework for incremental completions and narrowing selections. It provides an easy-to-use API for developers wishing to build their own Helm applications in Emacs, powerful search tools and dozens of already built-in commands providing completion to almost everything.
+#+begin_src emacs-lisp
+  (use-package helm
+    :ensure t
+    :init
+    (setq-default helm-M-x-fuzzy-match t)
+    :bind
+    (("M-x" . helm-M-x)
+     ("C-x C-f" . 'helm-find-files)
+     ("C-x C-b" . 'helm-buffers-list)))
 #+end_src
 
 ** Projectile Helm
