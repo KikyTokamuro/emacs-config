@@ -535,3 +535,10 @@ This package allows to translate the strings using Google Translate service dire
       "Search TKK."
       (list 430675 2721866130)))
 #+end_src
+
+** Elpher
+Elpher aims to provide a full-featured combination gopher and gemini client for GNU Emacs.
+#+begin_src emacs-lisp
+  (use-package elpher
+    :ensure t)
+#+end_src
