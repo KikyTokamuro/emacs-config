@@ -497,6 +497,17 @@ Perltidy integration.
       (message "Unable to find perltidy")))
 #+end_src
 
+** PHP
+For install php lsp:
+- /curl -Lo phpactor.phar https://github.com/phpactor/phpactor/releases/latest/download/phpactor.phar/
+- /chmod a+x phpactor.phar/
+- /mv phpactor.phar ~/.local/bin/phpactor/
+#+begin_src emacs-lisp
+  (use-package php-mode
+    :hook
+    (php-mode . eglot-ensure))
+#+end_src
+
 * Web tools
 
 ** Request
