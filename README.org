@@ -10,11 +10,12 @@ Example:
 
 ** Speed-up at startup
 #+BEGIN_SRC emacs-lisp
-  (let* ((normal-gc-cons-threshold (* 20 1024 1024))
-	 (init-gc-cons-threshold (* 128 1024 1024)))
+  (let ((normal-gc-cons-threshold (* 20 1024 1024))
+	(init-gc-cons-threshold (* 128 1024 1024)))
     (setq gc-cons-threshold init-gc-cons-threshold)
     (add-hook 'emacs-startup-hook
-	      (lambda () (setq gc-cons-threshold normal-gc-cons-threshold))))
+	      (lambda ()
+		(setq gc-cons-threshold normal-gc-cons-threshold))))
 #+END_SRC
 
 ** Increase the amount of data which emacs reads from the process
@@ -335,7 +336,6 @@ Major mode for keeping notes, authoring documents, computational notebooks, lite
        (python     . t)
        (perl       . t)
        (C          . t)
-       (awk        . t)
        (lisp       . t)
        (scheme     . t)
        (shell      . t)
@@ -414,37 +414,6 @@ For install golang lsp:
     :mode ("\\.go\\'" . go-mode)
     :hook
     (go-mode . my-go-hooks))
-#+end_src
-
-** OCaml
-Tuareg Mode is a good Emacs mode to edit OCaml code. It has a parser that let you recognize syntax errors by the meaning of special indentation, it can start an Ocaml toplevel and let you interact with it in a dedicated Emacs buffer.
-#+begin_src emacs-lisp
-  (use-package tuareg-mode
-    :mode
-    ("\\.ml[ily]?$" . tuareg-mode)
-    :init
-    (let ((opam-share (ignore-errors (car (process-lines "opam" "config" "var" "share")))))
-      (when (and opam-share (file-directory-p opam-share))
-	(add-to-list 'load-path (expand-file-name "emacs/site-lisp" opam-share))
-	(setq merlin-completion-with-doc t)
-	(setq merlin-command "opam exec ocamlmerlin")))
-    :hook
-    (tuareg-mode . merlin-mode))
-#+end_src
-
-utop is an improved toplevel (i.e., Read-Eval-Print Loop) for OCaml.
-#+begin_src emacs-lisp
-  (use-package utop
-    :diminish utop-minor-mode
-    :config
-    (setq utop-command "opam exec -- utop -emacs")
-    :hook
-    (tuareg-mode . utop-minor-mode))
-#+end_src
-
-Merlin and company mode integration.
-#+begin_src emacs-lisp
-  (use-package merlin-company)
 #+end_src
 
 ** Perl
