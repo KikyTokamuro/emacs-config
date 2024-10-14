@@ -9,14 +9,14 @@ Example:
 * Base settings
 
 ** Speed-up at startup
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
   (let ((normal-gc-cons-threshold (* 20 1024 1024))
 	(init-gc-cons-threshold (* 128 1024 1024)))
     (setq gc-cons-threshold init-gc-cons-threshold)
     (add-hook 'emacs-startup-hook
 	      (lambda ()
 		(setq gc-cons-threshold normal-gc-cons-threshold))))
-#+END_SRC
+#+end_src
 
 ** Increase the amount of data which emacs reads from the process
 #+begin_src emacs-lisp
@@ -141,12 +141,12 @@ For most files, the variable make-backup-files determines whether to make backup
 #+end_src
 
 ** Colors themes
-Highly accessible themes, conforming with the highest standard for colour contrast between background and foreground values (WCAG AAA). They also are optimised for users with red-green colour deficiency.
+The ef-themes are a collection of light and dark themes for GNU Emacs whose goal is to provide colorful ("pretty") yet legible options for users who want something with a bit more flair than the modus-themes.
 #+begin_src emacs-lisp
-  (use-package modus-themes
+  (use-package ef-themes
     :ensure t
     :config
-    (load-theme 'modus-operandi t))
+    (load-theme 'ef-trio-light t))
 #+end_src
 
 ** Smooth scrolling
@@ -341,6 +341,13 @@ Major mode for keeping notes, authoring documents, computational notebooks, lite
        (shell      . t)
        (emacs-lisp . t)
        (js         . t))))
+#+end_src
+
+** Org modern
+#+begin_src emacs-lisp
+  (use-package org-modern
+    :hook
+    (org-mode . org-modern-mode))
 #+end_src
 
 ** Web development
