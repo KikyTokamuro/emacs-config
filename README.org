@@ -10,12 +10,17 @@ Example:
 
 ** Speed-up at startup
 #+begin_src emacs-lisp
-  (let ((normal-gc-cons-threshold (* 20 1024 1024))
-	(init-gc-cons-threshold (* 128 1024 1024)))
-    (setq gc-cons-threshold init-gc-cons-threshold)
-    (add-hook 'emacs-startup-hook
-	      (lambda ()
-		(setq gc-cons-threshold normal-gc-cons-threshold))))
+  ;; Increase garbage collection threshold during initialization
+  (setq gc-cons-threshold (* 256 1024 1024))
+  (add-hook 'emacs-startup-hook
+            (lambda ()
+              (setq gc-cons-threshold (* 20 1024 1024))))
+
+  ;; Disable garbage collection during initialization
+  (setq gc-cons-percentage 0.6)
+  (add-hook 'emacs-startup-hook
+            (lambda ()
+              (setq gc-cons-percentage 0.1)))
 #+end_src
 
 ** Increase the amount of data which emacs reads from the process
@@ -149,6 +154,34 @@ The ef-themes are a collection of light and dark themes for GNU Emacs whose goal
     (load-theme 'ef-trio-light t))
 #+end_src
 
+** Modeline
+A modern and beautiful mode-line configuration using doom-modeline.
+#+begin_src emacs-lisp
+  ;; Check and install nerd-icons font if needed
+  (use-package nerd-icons
+    :ensure t
+    :config
+    (unless (member "Symbols Nerd Font Mono" (font-family-list))
+    (nerd-icons-install-fonts t)))
+
+  (use-package doom-modeline
+    :ensure t
+    :config
+    (setq doom-modeline-height 20)
+    (set-face-background 'doom-modeline-bar (face-background 'mode-line))
+    (setq doom-modeline-bar-width 1)
+    (doom-modeline-mode 1))
+#+end_src
+
+** Dashboard
+A startup screen showing recent files, bookmarks and agenda items.
+#+begin_src emacs-lisp
+  (use-package dashboard
+    :ensure t
+    :config
+    (dashboard-setup-startup-hook))
+#+end_src
+
 ** Smooth scrolling
 This package offers a minor mode which make emacs scroll smoothly. It keeps the point away from the top and bottom of the current buffer's window in order to keep lines of context around the point visible as much as possible, whilst minimising the frequency of sudden scroll jumps which are visually confusing.
 #+begin_src emacs-lisp
@@ -213,12 +246,10 @@ This library provides easy project management and navigation. The concept of a p
 #+end_src
 
 ** Treemacs
-Treemacs is a file and project explorer similar to NeoTree or vim’s NerdTree, but largely inspired by the Project Explorer in Eclipse. It shows the file system outlines of your projects in a simple tree layout allowing quick navigation and exploration, while also possessing basic file management utilities.
+Treemacs is a file and project explorer similar to NeoTree or vim's NerdTree, but largely inspired by the Project Explorer in Eclipse. It shows the file system outlines of your projects in a simple tree layout allowing quick navigation and exploration, while also possessing basic file management utilities.
 #+begin_src emacs-lisp
   (use-package treemacs
-    :ensure t
-    :init
-    (define-key treemacs-mode-map [mouse-1] #'treemacs-single-click-expand-action)
+    :ensure t 
     :bind
     ("<f5>" . treemacs))
 #+end_src
@@ -368,7 +399,7 @@ SLY is Sylvester the Cat's Common Lisp IDE.
     (setq inferior-lisp-program "sbcl"))
 #+end_src
 
-Geiser is a generic Emacs/Scheme interaction mode, featuring an enhanced REPL and a set of minor modes improving Emacs’ basic scheme major mode.
+Geiser is a generic Emacs/Scheme interaction mode, featuring an enhanced REPL and a set of minor modes improving Emacs' basic scheme major mode.
 #+begin_src emacs-lisp
   (use-package geiser-guile
     :mode
