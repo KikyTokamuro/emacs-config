@@ -260,6 +260,13 @@ Projectile integration for treemacs.
     :ensure t)
 #+end_src
 
+Nerd icons for treemacs.
+#+begin_src emacs-lisp
+  (use-package treemacs-nerd-icons
+    :config
+    (treemacs-load-theme "nerd-icons"))
+#+end_src
+
 ** Helm
 Helm is an Emacs framework for incremental completions and narrowing selections. It provides an easy-to-use API for developers wishing to build their own Helm applications in Emacs, powerful search tools and dozens of already built-in commands providing completion to almost everything.
 #+begin_src emacs-lisp
