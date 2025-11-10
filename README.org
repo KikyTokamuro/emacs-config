@@ -398,6 +398,7 @@ For install:
 #+end_src
 
 ** Lisp
+*** Common Lisp
 SLY is Sylvester the Cat's Common Lisp IDE.
 #+begin_src emacs-lisp
   (use-package sly
@@ -406,6 +407,7 @@ SLY is Sylvester the Cat's Common Lisp IDE.
     (setq inferior-lisp-program "sbcl"))
 #+end_src
 
+*** Scheme
 Geiser is a generic Emacs/Scheme interaction mode, featuring an enhanced REPL and a set of minor modes improving Emacs' basic scheme major mode.
 #+begin_src emacs-lisp
   (use-package geiser-guile
@@ -416,12 +418,22 @@ Geiser is a generic Emacs/Scheme interaction mode, featuring an enhanced REPL an
 	  geiser-guile-binary "guile3.0"))
 #+end_src
 
+*** Racket
 Major and minor modes for Racket: edit, REPL, check-syntax, debug, profile, and more. 
 #+begin_src emacs-lisp
   (use-package racket-mode
     :ensure t
     :hook
     (racket-mode . racket-xp-mode))
+#+end_src
+
+*** Fennel
+#+begin_src emacs-lisp
+  (use-package fennel-mode
+    :load-path "~/.emacs.d/fennel-mode/"
+    :mode "\\.fnl\\'"
+    :hook
+    (fennel-mode . eglot-ensure))
 #+end_src
 
 ** C/C++
