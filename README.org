@@ -311,8 +311,7 @@ Make Emacs use the $PATH set up by the user's shell.
     :config
     (setq exec-path-from-shell-variables '("PATH" "GOPATH" "PERL5LIB"))
     :init
-    (when (daemonp)
-      (exec-path-from-shell-initialize)))
+    (exec-path-from-shell-initialize))
 #+end_src
 
 * Spell settings
@@ -461,17 +460,15 @@ For install python lsp:
 For install golang lsp:
 - /go install golang.org/x/tools/gopls@latest/
 #+begin_src emacs-lisp
-  (defun my-go-hooks ()
-    "Golang hooks."
-    (add-hook 'before-save-hook #'eglot-format-buffer -10 t)
-    (eglot-ensure))
-
-  (use-package go-mode
-    :ensure t
-    :mode ("\\.go\\'" . go-mode)
-    :hook
-    (go-mode . my-go-hooks))
-#+end_src
+    (use-package go-mode
+      :ensure t
+      :mode ("\\.go\\'" . go-mode)
+      :hook
+      ((go-mode . eglot-ensure)
+       (go-mode . (lambda ()
+    	       (add-hook 'before-save-hook #'eglot-format-buffer -10 t)
+    	       (add-hook 'before-save-hook #'eglot-code-action-organize-imports nil t)))))
+#+END_SRC
 
 ** Perl
 For install perl lsp:
