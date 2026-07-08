@@ -23,6 +23,12 @@ Example:
               (setq gc-cons-percentage 0.1)))
 #+end_src
 
+** Native compilation
+#+BEGIN_SRC emacs-lisp
+  (setq native-comp-jit-compilation t)
+  (setq native-comp-speed 2)
+#+END_SRC
+
 ** Increase the amount of data which emacs reads from the process
 #+begin_src emacs-lisp
   (setq read-process-output-max (* 1024 1024))
@@ -85,7 +91,8 @@ Delete Selection mode lets you treat an Emacs region much like a typical text se
 ** Disable GUI components
 #+begin_src emacs-lisp
   (tooltip-mode -1)
-  (menu-bar-mode -1)
+  (unless (eq system-type 'darwin)
+    (menu-bar-mode -1))
   (tool-bar-mode -1)
   (scroll-bar-mode -1)
   (blink-cursor-mode nil)
@@ -166,6 +173,7 @@ A modern and beautiful mode-line configuration using doom-modeline.
 
   (use-package doom-modeline
     :ensure t
+    :defer 1
     :config
     (setq doom-modeline-height 20)
     (set-face-background 'doom-modeline-bar (face-background 'mode-line))
@@ -331,7 +339,8 @@ Flyspell is a minor mode that enables on-the-fly spell checking in Emacs. It is 
 Magit is a complete text-based user interface to Git. It fills the glaring gap between the Git command-line interface and various GUIs, letting you perform trivial as well as elaborate version control tasks with just a couple of mnemonic key presses.
 #+begin_src emacs-lisp
   (use-package magit
-    :ensure t)
+    :ensure t
+    :commands (magit-status magit-blame))
 #+end_src
 
 ** Company mode
@@ -339,8 +348,7 @@ Modular in-buffer completion framework.
 #+begin_src emacs-lisp
   (use-package company
     :ensure t
-    :init
-    (global-company-mode))
+    :hook (prog-mode . company-mode))
 #+end_src
 
 ** Eglot
@@ -356,8 +364,7 @@ On the fly syntax checking.
   (use-package flycheck
     :ensure t
     :diminish flycheck-mode
-    :config
-    (global-flycheck-mode))
+    :hook (prog-mode . flycheck-mode))
 #+end_src
 
 ** Org mode
@@ -387,15 +394,6 @@ Major mode for keeping notes, authoring documents, computational notebooks, lite
     (org-mode . org-modern-mode))
 #+end_src
 
-** Web development
-web-beautify is a formatting package of HTML, CSS and JavaScript/JSON.
-For install:
-- /npm -g install js-beautify/ 
-#+begin_src emacs-lisp
-  (use-package web-beautify
-    :ensure t)
-#+end_src
-
 ** Lisp
 *** Common Lisp
 SLY is Sylvester the Cat's Common Lisp IDE.
@@ -421,7 +419,6 @@ Geiser is a generic Emacs/Scheme interaction mode, featuring an enhanced REPL an
 Major and minor modes for Racket: edit, REPL, check-syntax, debug, profile, and more. 
 #+begin_src emacs-lisp
   (use-package racket-mode
-    :ensure t
     :hook
     (racket-mode . racket-xp-mode))
 #+end_src
