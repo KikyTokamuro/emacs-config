@@ -1,3 +1,7 @@
+#+begin_src elisp :tangle yes :exports none
+;; -*- lexical-binding: t; -*-
+#+end_src
+#+PROPERTY: header-args:elisp :tangle yes :lexical t
 #+TITLE: Literate Emacs Configuration
 #+AUTHOR: Arhangelsky Daniil (Kiky Tokamuro)
 
@@ -169,7 +173,7 @@ A modern and beautiful mode-line configuration using doom-modeline.
     :ensure t
     :config
     (unless (member "Symbols Nerd Font Mono" (font-family-list))
-    (nerd-icons-install-fonts t)))
+      (nerd-icons-install-fonts t)))
 
   (use-package doom-modeline
     :ensure t
@@ -551,20 +555,6 @@ EWW, the Emacs Web Wowser, is a web browser package for Emacs. It allows browsin
     :bind
     (:map eww-mode-map
 	  ("f" . eww-lnum-follow)))
-#+end_src
-
-** Google translate
-This package allows to translate the strings using Google Translate service directly from GNU Emacs.
-#+begin_src emacs-lisp
-  (use-package google-translate
-    :ensure t
-    :functions (google-translate--search-tkk)
-    :custom
-    (google-translate-backend-method 'curl)
-    :config
-    (defun google-translate--search-tkk ()
-      "Search TKK."
-      (list 430675 2721866130)))
 #+end_src
 
 ** Elpher
